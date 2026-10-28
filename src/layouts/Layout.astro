@@ -27,7 +27,7 @@ const canonical = `https://orionaster.github.io${home}${product ? 'products/pfa-
   </head>
   <body>
     <a class="skip-link" href="#main">{t.skip}</a>
-    <div class="concept-bar"><span>{t.notice}</span><span>{t.disclaimer}</span></div>
+    <div class="concept-bar"><span>{t.notice}</span></div>
     <header class="site-header">
       <a class="brand" href={home} aria-label={`Vesper Polymers ${t.home}`}><span class="brand-mark" aria-hidden="true">V</span><span>VESPER<small>POLYMERS</small></span></a>
       <nav aria-label={lang === 'en' ? 'Main navigation' : '主导航'}>
@@ -38,7 +38,7 @@ const canonical = `https://orionaster.github.io${home}${product ? 'products/pfa-
       <div class="nav-actions"><a class="language" href={counterpart} lang={other} aria-label={lang === 'en' ? '切换到中文，保留当前页面' : 'Switch to English, keep current page'}>{lang === 'en' ? '中文' : 'EN'}</a><button class="button compact" data-inquiry>{t.request}<span aria-hidden="true">↗</span></button></div>
     </header>
     <main id="main"><slot /></main>
-    <footer class="site-footer wrap"><a class="footer-brand" href={home}>VESPER POLYMERS</a><p>{t.footer}</p><span>{t.notice}</span></footer>
+    <footer class="site-footer wrap"><a class="footer-brand" href={home}>VESPER POLYMERS</a><p>{t.footer}</p></footer>
     <dialog id="inquiry" aria-labelledby="inquiry-title" data-draft-title={t.draftTitle} data-boundary={t.draftBoundary}>
       <div class="dialog-head"><h2 id="inquiry-title">{t.dialogTitle}</h2><button class="close" data-close aria-label={t.close}>×</button></div>
       <p>{t.dialogText}</p>
