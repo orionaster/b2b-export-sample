@@ -5,7 +5,7 @@ export const copy = {
     description: 'A fictional industrial B2B website concept. Explore polymer tubing, semantic specification tables and a bilingual procurement journey.',
     notice: 'Concept sample for discussion', disclaimer: 'Fictional brand. Illustrative specifications. No real products offered.',
     skip: 'Skip to content', home: 'Home', products: 'Products', applications: 'Applications', approach: 'Our approach', request: 'Prepare an inquiry',
-    heroLabel: 'POLYMER TUBING SYSTEMS', heroTitle: 'Precision begins with the flow.',
+    heroLabel: 'POLYMER TUBING SYSTEMS', heroTitle: 'Precision in flow.',
     heroText: 'Explore a clearer way to specify tubing for high-purity process environments.',
     explore: 'Explore the product', view: 'View specifications', imageAlt: 'AI-generated concept arrangement of translucent polymer tubes, a coil and an elbow fitting on a studio plinth',
     imageNote: 'AI-generated product concept. Not a product photograph.',
