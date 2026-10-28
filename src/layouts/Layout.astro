@@ -1,0 +1,69 @@
+---
+import '../styles/site.css';
+import { copy, dimensions } from '../data/copy';
+const { lang = 'en', product = false } = Astro.props;
+const t = copy[lang as keyof typeof copy];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const home = `${base}/${lang}/`;
+const productUrl = `${home}products/pfa-tubing/`;
+const other = lang === 'en' ? 'zh' : 'en';
+const counterpart = `${base}/${other}/${product ? 'products/pfa-tubing/' : ''}`;
+const canonical = `https://orionaster.github.io${home}${product ? 'products/pfa-tubing/' : ''}`;
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{product ? `${t.productTitle} | Vesper Polymers Concept` : t.title}</title>
+    <meta name="description" content={t.description} />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#142c39" />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={`https://orionaster.github.io${base}/en/${product ? 'products/pfa-tubing/' : ''}`} />
+    <link rel="alternate" hreflang="zh-Hans" href={`https://orionaster.github.io${base}/zh/${product ? 'products/pfa-tubing/' : ''}`} />
+    <link rel="alternate" hreflang="x-default" href={`https://orionaster.github.io${base}/en/${product ? 'products/pfa-tubing/' : ''}`} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t.skip}</a>
+    <div class="concept-bar"><span>{t.notice}</span><span>{t.disclaimer}</span></div>
+    <header class="site-header">
+      <a class="brand" href={home} aria-label={`Vesper Polymers ${t.home}`}><span class="brand-mark" aria-hidden="true">V</span><span>VESPER<small>POLYMERS</small></span></a>
+      <nav aria-label={lang === 'en' ? 'Main navigation' : '主导航'}>
+        <a href={productUrl} aria-current={product ? 'page' : undefined}>{t.products}</a>
+        <a href={`${home}#applications`}>{t.applications}</a>
+        <a href={`${home}#approach`}>{t.approach}</a>
+      </nav>
+      <div class="nav-actions"><a class="language" href={counterpart} lang={other} aria-label={lang === 'en' ? '切换到中文，保留当前页面' : 'Switch to English, keep current page'}>{lang === 'en' ? '中文' : 'EN'}</a><button class="button compact" data-inquiry>{t.request}<span aria-hidden="true">↗</span></button></div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer wrap"><a class="footer-brand" href={home}>VESPER POLYMERS</a><p>{t.footer}</p><span>{t.notice}</span></footer>
+    <dialog id="inquiry" aria-labelledby="inquiry-title" data-draft-title={t.draftTitle} data-boundary={t.draftBoundary}>
+      <div class="dialog-head"><h2 id="inquiry-title">{t.dialogTitle}</h2><button class="close" data-close aria-label={t.close}>×</button></div>
+      <p>{t.dialogText}</p>
+      <form id="inquiry-form">
+        <label for="application">{t.category}</label><select id="application" name="application">{t.options.map(o => <option>{o}</option>)}</select>
+        <label for="reference">{t.refLabel}</label><select id="reference" name="reference"><option>{t.any}</option>{dimensions.map(r => <option>{r[0]}</option>)}</select>
+        <button class="button" type="submit">{t.export}<span aria-hidden="true">↓</span></button>
+        <p id="draft-status" role="status" hidden>{t.draftNote}</p>
+      </form>
+    </dialog>
+    <script>
+      const dialog = document.querySelector<HTMLDialogElement>('#inquiry')!;
+      document.querySelectorAll('[data-inquiry]').forEach(button => button.addEventListener('click', () => dialog.showModal()));
+      document.querySelector('[data-close]')!.addEventListener('click', () => dialog.close());
+      dialog.addEventListener('click', event => { if (event.target === dialog) { const rect = dialog.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close(); } });
+      document.querySelector<HTMLFormElement>('#inquiry-form')!.addEventListener('submit', event => {
+        event.preventDefault();
+        const application = document.querySelector<HTMLSelectElement>('#application')!.value;
+        const reference = document.querySelector<HTMLSelectElement>('#reference')!.value;
+        const text = `${dialog.dataset.draftTitle}\n\n${application}\n${reference}\n\n${dialog.dataset.boundary}\n`;
+        const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
+        const a = Object.assign(document.createElement('a'), { href: url, download: 'concept-inquiry-not-submitted.txt' });
+        a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+        document.querySelector<HTMLElement>('#draft-status')!.hidden = false;
+      });
+    </script>
+  </body>
+</html>

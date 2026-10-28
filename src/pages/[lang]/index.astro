@@ -1,0 +1,22 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { copy, languages } from '../../data/copy';
+export function getStaticPaths() { return languages.map(lang => ({ params: { lang } })); }
+const lang = Astro.params.lang as keyof typeof copy;
+const t = copy[lang];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const product = `${base}/${lang}/products/pfa-tubing/`;
+---
+<Layout lang={lang}>
+  <section class="hero">
+    <div class="hero-copy"><p class="eyebrow">{t.heroLabel}</p><h1>{t.heroTitle}</h1><p class="hero-intro">{t.heroText}</p><a class="button mint" href={product}>{t.explore}<span aria-hidden="true">↗</span></a></div>
+    <figure class="hero-image"><img src={`${base}/images/polymer-concept.webp`} alt={t.imageAlt} width="1536" height="1024" fetchpriority="high" /><figcaption>{t.imageNote}</figcaption></figure>
+  </section>
+  <section class="material-section wrap" id="products">
+    <h2>{t.materialTitle}</h2><p class="section-intro">{t.materialText}</p>
+    <div class="materials"><a class="material-feature" href={product}><span class="material-form" aria-hidden="true">PFA</span><div><h3>{t.pfa}</h3><p>{t.pfaText}</p><span class="text-link">{t.openPfa} ↗</span></div></a><div class="material-categories"><article><span class="category-symbol" aria-hidden="true">PVDF</span><h3>{t.pvdf}</h3><p>{t.pvdfText}</p><small>{t.previewOnly}</small></article><article><span class="category-symbol" aria-hidden="true">CUSTOM</span><h3>{t.custom}</h3><p>{t.customText}</p><small>{t.previewOnly}</small></article></div></div>
+  </section>
+  <section class="applications" id="applications"><div class="wrap"><h2>{t.appTitle}</h2><p class="section-intro">{t.appText}</p><div class="application-list">{[[t.semiconductor,t.semiconductorText],[t.solar,t.solarText],[t.lab,t.labText]].map(([title,text]) => <article><h3>{title}</h3><p>{text}</p></article>)}</div></div></section>
+  <section class="approach wrap" id="approach"><div><h2>{t.detailTitle}</h2><p class="section-intro">{t.detailText}</p><a class="text-link" href={product}>{t.view} ↗</a></div><div class="approach-notes"><article><h3>{t.detailOne}</h3><p>{t.detailOneText}</p></article><article><h3>{t.detailTwo}</h3><p>{t.detailTwoText}</p></article></div></section>
+  <section class="closing"><div class="wrap"><h2>{t.finalTitle}</h2><p>{t.finalText}</p><button class="button mint" data-inquiry>{t.request}<span aria-hidden="true">↗</span></button></div></section>
+</Layout>

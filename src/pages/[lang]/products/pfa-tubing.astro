@@ -1,0 +1,36 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { copy, dimensions, languages } from '../../../data/copy';
+export function getStaticPaths() { return languages.map(lang => ({ params: { lang } })); }
+const lang = Astro.params.lang as keyof typeof copy;
+const t = copy[lang];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<Layout lang={lang} product>
+  <div class="breadcrumbs wrap"><a href={`${base}/${lang}/`}>{t.home}</a><span aria-hidden="true">/</span><span>{t.pfa}</span></div>
+  <section class="product-hero wrap"><div><p class="eyebrow">{t.productLabel}</p><h1>{t.productTitle}</h1><p class="section-intro">{t.productIntro}</p><dl class="product-facts">{[[t.material,t.materialValue],[t.finish,t.finishValue],[t.dataStatus,t.dataValue]].map(([label,value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl><a class="button" href="#specifications">{t.view}<span aria-hidden="true">↓</span></a></div><figure><img src={`${base}/images/polymer-concept.webp`} alt={t.imageAlt} width="1536" height="1024" fetchpriority="high" /><figcaption>{t.imageNote}</figcaption></figure></section>
+  <section class="spec-section wrap" id="specifications"><h2>{t.specs}</h2><p class="data-warning">{t.specIntro}</p><div class="table-tools"><div class="filter-field"><label for="spec-filter">{t.search}</label><input type="search" id="spec-filter" placeholder={t.placeholder} /></div><button class="button secondary" id="download-csv">{t.download}<span aria-hidden="true">↓</span></button></div><div class="table-meta"><span role="status"><strong id="row-count">{dimensions.length}</strong> {t.count}</span><button id="clear-filter">{t.clear}</button></div><p class="scroll-help" id="scroll-help">{t.scroll}</p><div class="table-scroll" role="region" aria-label={t.caption} aria-describedby="scroll-help" tabindex="0"><table id="spec-table"><caption>{t.caption}</caption><thead><tr>{t.headers.map(header => <th scope="col">{header}</th>)}</tr></thead><tbody>{dimensions.map(row => <tr>{row.map((value,index) => index === 0 ? <th scope="row">{value}</th> : <td>{value}</td>)}</tr>)}</tbody></table></div><p id="no-results" role="status" hidden>{t.noResults}</p></section>
+  <section class="engineering"><div class="wrap engineering-grid"><div><h2>{t.engineeringTitle}</h2><p>{t.engineeringText}</p><button class="button mint" data-inquiry>{t.request}<span aria-hidden="true">↗</span></button></div><ul>{t.checks.map(check => <li>{check}</li>)}</ul></div></section>
+  <section class="faq wrap"><h2>{t.faqTitle}</h2><div>{t.faqs.map(([q,a]) => <details><summary>{q}</summary><p>{a}</p></details>)}</div></section>
+  <script>
+    const input = document.querySelector<HTMLInputElement>('#spec-filter')!;
+    const rows = Array.from(document.querySelectorAll<HTMLTableRowElement>('#spec-table tbody tr'));
+    function filter() {
+      const query = input.value.trim().toLowerCase();
+      rows.forEach(row => row.hidden = !`${row.cells[0].textContent} ${row.cells[1].textContent}`.toLowerCase().includes(query));
+      const count = rows.filter(row => !row.hidden).length;
+      document.querySelector('#row-count')!.textContent = String(count);
+      document.querySelector<HTMLElement>('#no-results')!.hidden = count > 0;
+    }
+    input.addEventListener('input', filter);
+    document.querySelector('#clear-filter')!.addEventListener('click', () => { input.value = ''; filter(); input.focus(); });
+    document.querySelector('#download-csv')!.addEventListener('click', () => {
+      const heading = ['ILLUSTRATIVE ONLY - NOT ENGINEERING DATA', 'Outer diameter (mm)', 'Inner diameter (mm)', 'Wall (mm)', 'Sample length (m)'];
+      const data = [heading, ...rows.filter(row => !row.hidden).map(row => Array.from(row.cells).map(cell => cell.textContent))];
+      const csv = '\uFEFF' + data.map(row => row.map(value => `"${String(value).replaceAll('"', '""')}"`).join(',')).join('\r\n');
+      const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      Object.assign(document.createElement('a'), { href: url, download: 'illustrative-only-pfa-dimensions.csv' }).click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+  </script>
+</Layout>
